@@ -73,8 +73,14 @@ export function UserAuthForm({
       toast.success(`Welcome back, ${response.user.email}!`)
 
       // Redirect to the stored location or default to dashboard
-      const targetPath = redirectTo || '/'
-      navigate({ to: targetPath, replace: true })
+      if (redirectTo) {
+        console.log('📍 Redirecting to saved location:', redirectTo)
+        // Use window.location for full path redirect
+        window.location.href = redirectTo
+      } else {
+        console.log('📍 Redirecting to dashboard')
+        navigate({ to: '/_authenticated/', replace: true })
+      }
     } catch (error: any) {
       console.error('❌ Login failed:', error)
 

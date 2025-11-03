@@ -1,17 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { isAuthenticated } from '@/lib/route-guards'
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
 
 export const Route = createFileRoute('/_authenticated')({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     // Check if user is authenticated
     if (!isAuthenticated()) {
-      throw new Error('Not authenticated')
+      // Redirect to sign-in with the current location as redirect target
+      throw redirect({
+        to: '/sign-in',
+        search: {
+          redirect: location.href,
+        },
+      })
     }
-  },
-  errorComponent: () => {
-    // Redirect to login if not authenticated
-    return null
   },
   component: AuthenticatedLayout,
 })
