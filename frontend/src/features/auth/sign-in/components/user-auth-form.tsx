@@ -79,7 +79,8 @@ export function UserAuthForm({
         window.location.href = redirectTo
       } else {
         console.log('📍 Redirecting to dashboard')
-        navigate({ to: '/_authenticated/', replace: true })
+        // Navigate to root (/) which is the authenticated dashboard
+        navigate({ to: '/', replace: true })
       }
     } catch (error: any) {
       console.error('❌ Login failed:', error)
