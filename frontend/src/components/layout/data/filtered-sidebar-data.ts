@@ -11,6 +11,7 @@ import {
   Truck,
 } from 'lucide-react'
 import { type SidebarData, type NavGroup } from '../types'
+import { sidebarData } from './sidebar-data' // Import original template data
 
 // Platform roles that should see platform-specific menus
 const PLATFORM_ROLES = ['SUPER_ADMIN', 'DEVELOPER', 'SUPPORT', 'BILLING_ADMIN']
@@ -24,6 +25,11 @@ const TENANT_ROLES = ['ADMIN', 'CASHIER', 'MANAGER', 'ACCOUNTANT', 'VIEWER']
 export function getFilteredSidebarData(userRole?: string): NavGroup[] {
   if (!userRole) {
     return getDefaultNavGroups()
+  }
+
+  // DEVELOPER gets full template menu for development/testing
+  if (userRole === 'DEVELOPER') {
+    return getDeveloperNavGroups()
   }
 
   const isPlatformUser = PLATFORM_ROLES.includes(userRole)
@@ -77,6 +83,14 @@ function getPlatformNavGroups(): NavGroup[] {
       ],
     },
   ]
+}
+
+/**
+ * Developer navigation - full access to ALL template menus for testing
+ */
+function getDeveloperNavGroups(): NavGroup[] {
+  // Return all original template menus for developer
+  return sidebarData.navGroups
 }
 
 /**
