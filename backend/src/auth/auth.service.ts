@@ -637,7 +637,7 @@ export class AuthService {
       const outlet = await this.prisma.outlet.findFirst({
         where: {
           id: outletId,
-          tenantId: user.tenantId,
+          tenantId: user.tenantId || undefined, // Platform users can view any tenant's outlets
           isActive: true,
         },
       });

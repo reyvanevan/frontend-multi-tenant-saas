@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AuditAction, AuditStatus } from '@prisma/client';
 
 export interface CreateAuditLogDto {
-  tenantId: string;
+  tenantId: string | null;
   userId?: string;
   action: AuditAction;
   resource: string;
@@ -18,7 +18,7 @@ export interface CreateAuditLogDto {
 }
 
 export interface AuditLogFilters {
-  tenantId: string;
+  tenantId: string | null;
   userId?: string;
   action?: AuditAction;
   resource?: string;
@@ -42,7 +42,7 @@ export class AuditLogsService {
 
       const auditLog = await this.prisma.auditLog.create({
         data: {
-          tenantId: dto.tenantId,
+          tenantId: dto.tenantId as any, // Allow null for platform users
           userId: dto.userId,
           action: dto.action,
           resource: dto.resource,
@@ -324,7 +324,7 @@ export class AuditLogsService {
    * Helper: Log LOGIN action
    */
   async logLogin(
-    tenantId: string,
+    tenantId: string | null,
     userId: string,
     success: boolean,
     ipAddress?: string,
