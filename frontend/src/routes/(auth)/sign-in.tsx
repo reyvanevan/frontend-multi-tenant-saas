@@ -12,7 +12,7 @@ export const Route = createFileRoute('/(auth)/sign-in')({
     // If already authenticated, redirect to dashboard
     if (isAuthenticated()) {
       throw redirect({
-        to: '/_authenticated/',
+        to: '/',
       })
     }
   },
