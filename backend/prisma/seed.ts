@@ -1036,7 +1036,58 @@ async function main() {
     },
   });
 
-  console.log('✅ Tenant users created');
+  // Manager for Demo Tenant
+  const managerUser = await prisma.user.upsert({
+    where: { email: 'manager@demo.com' },
+    update: {},
+    create: {
+      tenantId: tenant.id, // Belongs to Demo Tenant
+      outletId: outlet.id, // Assigned to main outlet
+      roleId: managerRole.id,
+      username: 'manager',
+      email: 'manager@demo.com',
+      passwordHash,
+      firstName: 'Manager',
+      lastName: 'User',
+      isActive: true,
+    },
+  });
+
+  // Accountant for Demo Tenant
+  const accountantUser = await prisma.user.upsert({
+    where: { email: 'accountant@demo.com' },
+    update: {},
+    create: {
+      tenantId: tenant.id, // Belongs to Demo Tenant
+      outletId: outlet.id, // Assigned to main outlet
+      roleId: accountantRole.id,
+      username: 'accountant',
+      email: 'accountant@demo.com',
+      passwordHash,
+      firstName: 'Accountant',
+      lastName: 'User',
+      isActive: true,
+    },
+  });
+
+  // Viewer for Demo Tenant (Read-only)
+  const viewerUser = await prisma.user.upsert({
+    where: { email: 'viewer@demo.com' },
+    update: {},
+    create: {
+      tenantId: tenant.id, // Belongs to Demo Tenant
+      outletId: outlet.id, // Assigned to main outlet
+      roleId: viewerRole.id,
+      username: 'viewer',
+      email: 'viewer@demo.com',
+      passwordHash,
+      firstName: 'Viewer',
+      lastName: 'User',
+      isActive: true,
+    },
+  });
+
+  console.log('✅ Tenant users created (Admin, Cashier, Manager, Accountant, Viewer)');
 
   // Create Product Categories
   console.log('📦 Creating product categories...');
