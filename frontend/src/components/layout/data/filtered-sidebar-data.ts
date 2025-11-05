@@ -9,15 +9,15 @@ import {
   Warehouse,
   Store,
   Truck,
+  Settings,
+  FileText,
+  BarChart3,
+  Headphones,
+  Wrench,
+  Eye,
 } from 'lucide-react'
-import { type SidebarData, type NavGroup } from '../types'
+import { type NavGroup } from '../types'
 import { sidebarData } from './sidebar-data' // Import original template data
-
-// Platform roles that should see platform-specific menus
-const PLATFORM_ROLES = ['SUPER_ADMIN', 'DEVELOPER', 'SUPPORT', 'BILLING_ADMIN']
-
-// Tenant roles that should see tenant-specific menus  
-const TENANT_ROLES = ['ADMIN', 'CASHIER', 'MANAGER', 'ACCOUNTANT', 'VIEWER']
 
 /**
  * Get filtered sidebar navigation based on user role
@@ -27,33 +27,45 @@ export function getFilteredSidebarData(userRole?: string): NavGroup[] {
     return getDefaultNavGroups()
   }
 
-  // DEVELOPER gets full template menu for development/testing
-  if (userRole === 'DEVELOPER') {
-    return getDeveloperNavGroups()
+  // Platform roles - check specific role first
+  switch (userRole) {
+    case 'SUPER_ADMIN':
+      return getPlatformSuperAdminNavGroups()
+    case 'DEVELOPER':
+      return getDeveloperNavGroups()
+    case 'BILLING_ADMIN':
+      return getBillingAdminNavGroups()
+    case 'SUPPORT':
+      return getSupportNavGroups()
+    
+    // Tenant roles
+    case 'ADMIN':
+      return getTenantAdminNavGroups()
+    case 'MANAGER':
+      return getManagerNavGroups()
+    case 'ACCOUNTANT':
+      return getAccountantNavGroups()
+    case 'CASHIER':
+      return getCashierNavGroups()
+    case 'VIEWER':
+      return getViewerNavGroups()
+    
+    default:
+      return getDefaultNavGroups()
   }
-
-  const isPlatformUser = PLATFORM_ROLES.includes(userRole)
-  const isTenantUser = TENANT_ROLES.includes(userRole)
-
-  if (isPlatformUser) {
-    return getPlatformNavGroups()
-  }
-
-  if (isTenantUser) {
-    return getTenantNavGroups()
-  }
-
-  // Fallback to default
-  return getDefaultNavGroups()
 }
 
+// ============================================
+// PLATFORM ROLES NAVIGATION
+// ============================================
+
 /**
- * Platform admin navigation - for SUPER_ADMIN, DEVELOPER, SUPPORT, BILLING_ADMIN
+ * Platform SUPER_ADMIN - Full platform access
  */
-function getPlatformNavGroups(): NavGroup[] {
+function getPlatformSuperAdminNavGroups(): NavGroup[] {
   return [
     {
-      title: 'Platform',
+      title: 'Platform Management',
       items: [
         {
           title: 'Dashboard',
@@ -73,12 +85,17 @@ function getPlatformNavGroups(): NavGroup[] {
         {
           title: 'Analytics',
           url: '/analytics',
-          icon: LineChart,
+          icon: BarChart3,
         },
         {
           title: 'Platform Users',
-          url: '/platform-users',
+          url: '/users',
           icon: Users,
+        },
+        {
+          title: 'Settings',
+          url: '/settings',
+          icon: Settings,
         },
       ],
     },
@@ -86,20 +103,84 @@ function getPlatformNavGroups(): NavGroup[] {
 }
 
 /**
- * Developer navigation - full access to ALL template menus for testing
+ * DEVELOPER - Full template access for development/testing
  */
 function getDeveloperNavGroups(): NavGroup[] {
-  // Return all original template menus for developer
   return sidebarData.navGroups
 }
 
 /**
- * Tenant navigation - for ADMIN, CASHIER, MANAGER
+ * BILLING_ADMIN - Subscriptions and billing only
  */
-function getTenantNavGroups(): NavGroup[] {
+function getBillingAdminNavGroups(): NavGroup[] {
   return [
     {
-      title: 'General',
+      title: 'Billing',
+      items: [
+        {
+          title: 'Dashboard',
+          url: '/',
+          icon: LayoutDashboard,
+        },
+        {
+          title: 'Subscriptions',
+          url: '/subscriptions',
+          icon: CreditCard,
+        },
+        {
+          title: 'Tenants',
+          url: '/tenants',
+          icon: Building2,
+        },
+        {
+          title: 'Reports',
+          url: '/reports',
+          icon: FileText,
+        },
+      ],
+    },
+  ]
+}
+
+/**
+ * SUPPORT - View-only access to help tenants
+ */
+function getSupportNavGroups(): NavGroup[] {
+  return [
+    {
+      title: 'Support',
+      items: [
+        {
+          title: 'Dashboard',
+          url: '/',
+          icon: LayoutDashboard,
+        },
+        {
+          title: 'Tenants',
+          url: '/tenants',
+          icon: Building2,
+        },
+        {
+          title: 'Support Tickets',
+          url: '/support',
+          icon: Headphones,
+        },
+      ],
+    },
+  ]
+}
+
+// ============================================
+// TENANT ROLES NAVIGATION
+// ============================================
+
+/**
+ * Tenant ADMIN - Full tenant access
+ */
+function getTenantAdminNavGroups(): NavGroup[] {
+  return [
+    {
+      title: 'Operations',
       items: [
         {
           title: 'Dashboard',
@@ -117,11 +198,6 @@ function getTenantNavGroups(): NavGroup[] {
           icon: Warehouse,
         },
         {
-          title: 'Reports',
-          url: '/reports',
-          icon: LineChart,
-        },
-        {
           title: 'Products',
           url: '/products',
           icon: Package,
@@ -136,10 +212,157 @@ function getTenantNavGroups(): NavGroup[] {
           url: '/suppliers',
           icon: Truck,
         },
+      ],
+    },
+    {
+      title: 'Management',
+      items: [
+        {
+          title: 'Reports',
+          url: '/reports',
+          icon: LineChart,
+        },
         {
           title: 'Users',
           url: '/users',
           icon: Users,
+        },
+        {
+          title: 'Settings',
+          url: '/settings',
+          icon: Settings,
+        },
+      ],
+    },
+  ]
+}
+
+/**
+ * MANAGER - Outlet operations
+ */
+function getManagerNavGroups(): NavGroup[] {
+  return [
+    {
+      title: 'Operations',
+      items: [
+        {
+          title: 'Dashboard',
+          url: '/',
+          icon: LayoutDashboard,
+        },
+        {
+          title: 'POS',
+          url: '/pos',
+          icon: ShoppingCart,
+        },
+        {
+          title: 'Inventory',
+          url: '/inventory',
+          icon: Warehouse,
+        },
+        {
+          title: 'Products',
+          url: '/products',
+          icon: Package,
+        },
+        {
+          title: 'Outlets',
+          url: '/outlets',
+          icon: Store,
+        },
+        {
+          title: 'Reports',
+          url: '/reports',
+          icon: LineChart,
+        },
+      ],
+    },
+  ]
+}
+
+/**
+ * ACCOUNTANT - Reports and analytics focus
+ */
+function getAccountantNavGroups(): NavGroup[] {
+  return [
+    {
+      title: 'Analytics',
+      items: [
+        {
+          title: 'Dashboard',
+          url: '/',
+          icon: LayoutDashboard,
+        },
+        {
+          title: 'Reports',
+          url: '/reports',
+          icon: LineChart,
+        },
+        {
+          title: 'Transactions',
+          url: '/transactions',
+          icon: FileText,
+        },
+        {
+          title: 'Inventory',
+          url: '/inventory',
+          icon: Warehouse,
+        },
+        {
+          title: 'Products',
+          url: '/products',
+          icon: Package,
+        },
+      ],
+    },
+  ]
+}
+
+/**
+ * CASHIER - Limited POS operations
+ */
+function getCashierNavGroups(): NavGroup[] {
+  return [
+    {
+      title: 'General',
+      items: [
+        {
+          title: 'Dashboard',
+          url: '/',
+          icon: LayoutDashboard,
+        },
+        {
+          title: 'POS',
+          url: '/pos',
+          icon: ShoppingCart,
+        },
+        {
+          title: 'Products',
+          url: '/products',
+          icon: Package,
+        },
+      ],
+    },
+  ]
+}
+
+/**
+ * VIEWER - Read-only access
+ */
+function getViewerNavGroups(): NavGroup[] {
+  return [
+    {
+      title: 'General',
+      items: [
+        {
+          title: 'Dashboard',
+          url: '/',
+          icon: LayoutDashboard,
+        },
+        {
+          title: 'Reports',
+          url: '/reports',
+          icon: Eye,
         },
       ],
     },
